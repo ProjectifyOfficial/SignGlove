@@ -1,0 +1,85 @@
+<Interface>:
+
+	BoxLayout:
+		orientation: 'vertical'
+		TextInput:
+			id: hulk
+			multiline: True
+
+		BoxLayout:
+			orientation: 'horizontal'
+			
+			Button:
+				id: connect_btn
+				text: 'Connect'
+				on_press: root.connect()
+			
+			Button:
+				id: pair_btn
+				text: 'Pair'
+				on_press: root.pair()
+
+		BoxLayout:
+			orientation: 'horizontal'
+			
+			Button:
+				id: start_btn
+				text: 'Start'
+				on_press: root.start()
+			
+			Button:
+				id: stop_btn
+				text: 'Stop'
+				on_press: root.stop()
+				
+			Button:
+				id: train_btn
+				text: 'Train'
+				on_press: root.train()
+	
+		BoxLayout:
+			orientation: 'horizontal'
+
+			Label:
+				text: 'Use TTS'
+			CheckBox:
+				id: use_tts
+				active: True
+				
+		BoxLayout:
+			orientation: 'horizontal'
+
+			Label:
+				text: 'Log Serial Data'
+			CheckBox:
+				id: use_log
+				active: False		
+					
+		BoxLayout:
+			orientation: 'horizontal'
+			Button:
+				text: 'About'
+				on_press: root.about()				
+			Button:
+				text: 'Quit'
+				on_press: root.quit()
+
+<InterfaceMinMax>:
+	
+	orientation: 'vertical'
+	TextInput:
+		id: input_box
+	Label:
+		id: min_max_lbl
+		
+	Button:
+		text: 'start'
+		on_press: root.start()
+		
+	Button:
+		text: 'stop'
+		on_press: root.stop()
+
+	
+			
+			

@@ -1,0 +1,48 @@
+<Interface>:
+
+	BoxLayout:
+		orientation: 'vertical'
+		Label:
+			id: superman
+			multiline: True
+
+		BoxLayout:
+			orientation: 'horizontal'
+			
+			Button:
+				id: connect_btn
+				text: 'Connect'
+				on_press: root.connect()
+			
+			Button:
+				id: pair_btn
+				text: 'Pair'
+				on_press: root.pair()
+
+		BoxLayout:
+			orientation: 'horizontal'
+			
+			Button:
+				id: start_btn
+				text: 'Start'
+				on_press: root.start()
+			
+			Button:
+				id: stop_btn
+				text: 'Stop'
+				on_press: root.stop()
+	
+		BoxLayout:
+			orientation: 'horizontal'
+
+			Label:
+				text: 'Use TTS'
+			CheckBox:
+				id: use_tts
+
+		Button:
+			text: 'Quit'
+			on_press: root.quit()
+			
+		
+		
