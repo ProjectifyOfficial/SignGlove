@@ -1,0 +1,16 @@
+<Interface>:
+	BoxLayout:
+		orientation: 'vertical'
+		Label:
+			id: hulk
+			text: 'Press start!'
+	
+		Button:
+			id: start_btn
+			text: 'Start'
+			on_press: root.start()
+			
+		Button:
+			id: exit_btn
+			text: 'Quit'
+			on_press: exit()

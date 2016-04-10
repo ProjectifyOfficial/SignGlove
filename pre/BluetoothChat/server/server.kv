@@ -1,0 +1,21 @@
+<Interface>:
+
+	BoxLayout:
+		orientation: 'vertical'
+
+		TextInput:
+			id: superman
+		Button:
+			text: 'Connect'
+			on_press: root.connect()
+
+		Button:
+			text: 'Send'
+			id: send_btn
+			on_press: root.send()
+
+		Button:
+			text: 'Quit'
+			on_press: root.quit()
+			
+			

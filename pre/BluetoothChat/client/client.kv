@@ -1,0 +1,13 @@
+<Interface>:
+
+	BoxLayout:
+		orientation: 'vertical'
+		Label:
+			id: hulk
+			text: 'Press connect to start'
+		Button:
+			text: 'Connect'
+			on_press: root.pair()
+		Button:
+			text: 'Quit'
+			on_press: root.quit()

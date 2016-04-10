@@ -1,0 +1,47 @@
+<Interface>:
+	BoxLayout:
+		orientation: 'vertical'
+		spacing: 10
+		padding: [10,10,10,10]
+		
+		BoxLayout:
+			orientation: 'horizontal'
+			
+			TextInput:
+				id: text_input
+				multiline: True
+				height: 1500
+		
+			TextInput:
+				id: text_input_data
+				multiline: True
+				height: 1500
+			
+		Button:
+			text: 'Start'
+			on_press: root.foo()
+			
+		Button:
+			text: 'Pair with client'
+	
+		Button:
+			text: 'Stop'
+			
+			
+		Button:
+			text: 'Quit'
+			on_press: exit()
+	
+		BoxLayout:
+			orientation: 'horizontal'
+			Label:
+				text: 'Use Text-to-Speech'
+			CheckBox:
+				id: use_tts
+
+		BoxLayout:
+			orientation: 'horizontal'
+			Label:
+				text: 'Show Data'
+			CheckBox:
+				id: show_data
