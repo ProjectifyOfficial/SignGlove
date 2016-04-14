@@ -1,13 +1,14 @@
-import math,string,random
-import numpy as np
-from abc import *
-THRESHOLD = 10 #TODO change
-
+import math,string,random,time
+#import numpy as np
+#from abc import *
+THRESHOLD = 1000 #TODO change
+global VALID_GESTURE_TIME
+VALID_GESTURE_TIME = 0.01
+SYMBOL_COUNT = 6
 
 #Metrics and norms
 class Metric:
 	
-	@abstractmethod
 	def __call__(self, X):
 		pass
 		
@@ -102,7 +103,7 @@ class PointCluster (dict): #inherits from hashmap
 	def __init__(self,ndims=2):
 		self.cluster = {}
 		self._centroids = {}
-		self.ndims = 2
+		self.ndims = ndims
 	
 	def keys(self):
 		return self.cluster.keys()	
@@ -128,14 +129,17 @@ class PointCluster (dict): #inherits from hashmap
 		self.cluster[key] = value		
 		
 	@staticmethod
-	def GenerateRandomPointCluster(n,dims = 2):
+	def GenerateRandomPointCluster(n,dims = 2, number_of_classes = -1):
 		result = []
 		for i in range(n):
 			P = []
 			for d in range(dims):
-				P.append(random.random()*100)
+				P.append(random.randrange(0,100))
 			P = Point(*P)
-			P.Symbol = random.choice(string.letters)
+			if number_of_classes == -1:
+				P.Symbol = random.choice(string.letters)
+			else:
+				P.Symbol = random.choice(string.letters[:number_of_classes])
 			result.append(P)
 		return result
 	
@@ -166,6 +170,14 @@ class PointCluster (dict): #inherits from hashmap
 			cluster.append_point(p)
 		return cluster
 		
+	@staticmethod
+	def ToList(cluster):
+		l = []
+		for s in cluster.cluster.keys(): 
+			l += cluster.cluster[s]
+			
+		return l
+		
 	def lengths(self):
 		length = {}
 		for k in self.cluster.keys():
@@ -174,19 +186,18 @@ class PointCluster (dict): #inherits from hashmap
 
 class Classifier:
 	"""ABC for Classifier"""
-	__metaclass__ = ABCMeta
+	pass
 
 class KNNClassifier (Classifier):
 	"""KNN classifier"""
 	
 	def __init__(self, sampleData = [], norm=Norms.EuclideanNorm):
-		self.sampleData = sampleData
+		#self.sampleData = sampleData
 		self.clusters = PointCluster.ToCluster(sampleData)
+		self.N = len(sampleData)
 		self.norm = norm
 
 	def GetClosest(self, p, K = 1):
-		# distances = array [ [distance, point] ]
-		#distances = sorted([Point.DistanceSquared(p, self.sampleData[i]) for i in range(len(self.sampleData))], key=lambda x: x[0])
 		distances = []
 		for cluster in self.clusters.keys():
 			for y in self.clusters[cluster]:
@@ -195,36 +206,39 @@ class KNNClassifier (Classifier):
 		closePoints = {}
 		for i in range(min(K, len(distances))):
 			if distances[i][0] <= THRESHOLD:
-				#closePoints.append(distances[i][1]) # grab the ith point
+				
 				try:
 					closePoints[distances[i][1].Symbol] += 1 
 				except KeyError:
 					closePoints[distances[i][1].Symbol] = 1         
 		return closePoints
 	
-	def Vote(self, p, K = 1, f = lambda x: x + 1, append_to_sample_data=True):
+	def Vote(self, p, K = 1, f = lambda x: x + 1, append_to_sample_data=False):
 		closePoints = self.GetClosest(p, K)
 		#print closePoints, K
 		keys = closePoints.keys()
-		candidateSymbol = keys[0]
+		try:
+			candidateSymbol = [keys[0]]
+		except:
+			return None
 		for symbol in keys:
-			if closePoints[candidateSymbol] < closePoints[symbol]:
-				candidateSymbol = symbol
+			if closePoints[candidateSymbol[0]] < closePoints[symbol]:
+				candidateSymbol = [symbol]
 		
 		for symbol in keys:
-			if closePoints[candidateSymbol] == closePoints[symbol] and candidateSymbol != symbol:
-				K_prime = int(f(K))
-				if K_prime <= len(self.sampleData): #avoid depth exceeded problem
-					return self.Vote(p, K_prime) 
+			if closePoints[candidateSymbol[0]] == closePoints[symbol] and candidateSymbol[0] != symbol:
+				#K_prime = int(f(K))
+				#if K_prime <= self.N: #avoid depth exceeded problem
+					#return self.Vote(p, K_prime) 
+				candidateSymbol.append(symbol)
+		
 		if append_to_sample_data:
 			p.Symbol = symbol
-			self.sampleData.append(p)
+			#self.sampleData.append(p)
 			self.clusters[symbol].append(p) #cluster always exist here
-		return symbol
-	
-	def Update(self):
-		self.cluster = PointCluster.ToCluster(self.sampleData)
-		
+			serlf.N += 1
+		return candidateSymbol
+					
 	def __repr__(self):
 		return self.clusters
 		
@@ -235,7 +249,6 @@ class KNNClassifier (Classifier):
 			Q = self.centroids[s] - p
 			sigma = sigma + Norms.EuclideanNorm(Q)
 		return math.sqrt(sigma*1.0 / len(self.centroids))		
-
 
 class KMeansClassifier (Classifier): #some stack overflow stuff
 	"""KMeans Classifier"""
@@ -316,34 +329,124 @@ class KMeansClassifier (Classifier): #some stack overflow stuff
 			return True
 		return old_centroids == centroids
 
-class SymbolManager:
-	__metaclass__ = ABCMeta
-	
-	@abstractmethod
-	def Update(self, values):
-		pass
-		
-	@abstractmethod
-	def OnActivationChanged(self, data):
-		pass
-		
-	@abstractmethod
-	def GetActivated(self):
-		pass
+class SymbolState:
+	IDLE, VALID_GESTURE = range(2)
 
+	def __init__(self):
+		self.CurrentState = SymbolState.IDLE    
+		self.TimeInside = 0                      # time inside current state
+
+	def SetState(self, newState, dt):
+		
+		if self.CurrentState != newState:        # enter new state => reset time
+			self.TimeInside = 0
+		else:                                    # already in new state => accumulate time
+			self.TimeInside += dt
+				
+		self.CurrentState = newState
+
+class SymbolManager:
+	
+	def __init__(self, train_data):
+		self.State = SymbolState()
+		self.ActivationData = None
+		self.StartTime = time.time()
+		self.Subscribers = []
+		self.knn = KNNClassifier(train_data, norm=Norms.EuclideanNorm)
+	
+	def Update(self, values):
+		if isinstance(values, Point):
+			P = values
+		else:
+			P = Point(*values)
+		
+		dt = time.time() - self.StartTime
+		K = int(math.sqrt(self.knn.N))
+
+		candidate_class = self.knn.Vote(P, K)
+		print candidate_class
+		
+		if candidate_class != None and len(candidate_class) == 1:
+			self.OnActivationChanged(candidate_class[0])
+				
+		#if candidate_class == None or len(candidate_class) > 1:
+			#self.State.SetState(SymbolState.IDLE, dt)
+			#self.ActivationData = None
+		#else:
+			#self.State.SetState(SymbolState.VALID_GESTURE, dt)
+			
+			#if self.State.TimeInside >= VALID_GESTURE_TIME:         # gesture identified:
+				#identifiedGesture = candidate_class[0]                      # the only element of actives array
+
+				#if self.ActivationData is None:                     # first time data change after IDLE state
+					#self.OnActivationChanged(identifiedGesture.Data)                    
+
+				#self.ActivationData = identifiedGesture.Data 
+				
+		self.StartTime = time.time()
+				
+	def OnActivationChanged(self, data):  
+		for f in self.Subscribers:
+			f(data)
+	
+	#replaced by vote	 
+	def GetActivated(self):
+		print 'obsolete'
+		
+	def __str__(self):
+		return self.knn.clusters.__str__()	
+		
+	@staticmethod
+	def DummySub(data):
+		print data
+
+def GenerateRandomPoints(N, d):
+	l = []
+	for i in range(N):
+		s = []
+		for j in range(d):
+			s.append(random.randint(0,100))
+		l.append(Point(*s))
+	return l
+
+def populate_all(filename):
+	cluster = PointCluster(SYMBOL_COUNT)
+	symbol = ''
+	with open(filename, 'r') as f:
+		while True:
+			line = f.readline()
+			if not line:
+				break
+			line = line.strip('\n')	
+			if line[0] != '[' and line[0] in string.letters: #f[0] is alpha
+				symbol = f[0]
+			elif line[0] == '[' and line[len(line)-1] == ']':
+				line = ((line.strip('[')).strip(']')).strip('\n')
+				line = line.strip(']')
+				line = line.split(',')
+				P = Point(*map( lambda x: int(x), line))
+				P.Symbol = symbol
+				cluster.append_point(P)
+	return SymbolManager(cluster)
+
+	
 if __name__ == '__main__':	
-	N = 25000 #realistic approximation? 
-	M = 100
+	N = 2500 #realistic approximation? 
+	M = 50
 	K = int(math.sqrt(N))
 	
-	sample_pts = PointCluster.GenerateRandomPointCluster(N, 2)
-	train_pts = M*[Point(random.randint(0,100), random.randint(0,100))]
+	sample_pts = PointCluster.GenerateRandomPointCluster(N, 6, 26)
+	train_pts = GenerateRandomPoints(M, 6)
 	
-	
-	knn = KNNClassifier(sample_pts, PNorm(2))
-	
+	for p in train_pts:
+		print p
+		
+	symbol_manager = SymbolManager(sample_pts)
+	symbol_manager.Subscribers.append(SymbolManager.DummySub)
 	
 	for Q in train_pts:
-		s = knn.Vote(Q, K)
-		print s
+		time.sleep(0.02)
+		symbol_manager.Update(Q)
+	
+	
 	
