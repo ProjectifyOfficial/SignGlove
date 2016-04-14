@@ -1,4 +1,5 @@
 import math,string,random
+import numpy as np
 from abc import *
 THRESHOLD = 10 #TODO change
 
@@ -243,18 +244,18 @@ class KMeansClassifier (Classifier): #some stack overflow stuff
 	def kmeans(data, k, c):
 		centroids = []
 	
-		centroids = KNNClassifier.randomize_centroids(data, centroids, k)  
+		centroids = KMeansClassifier.randomize_centroids(data, centroids, k)  
 	
 		old_centroids = [[] for i in range(k)] 
 	
 		iterations = 0
-		while not (KNNClassifier.has_converged(centroids, old_centroids, iterations)):
+		while not (KMeansClassifier.has_converged(centroids, old_centroids, iterations)):
 			iterations += 1
 	
 			clusters = [[] for i in range(k)]
 	
 			# assign data points to clusters
-			clusters = KNNClassifier.dist(data, centroids, clusters, norm=Norms.EuclideanNorm) #generalize norm
+			clusters = KMeansClassifier.dist(data, centroids, clusters, norm=Norms.EuclideanNorm) #generalize norm
 	
 			# recalculate centroids
 			index = 0
