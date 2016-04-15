@@ -11,7 +11,11 @@ features.
 
 """
 
-import json, random, sys
+#### Libraries
+# Standard library
+import json
+import random
+import sys
 
 # Third-party libraries
 import numpy as np
@@ -23,10 +27,15 @@ class QuadraticCost(object):
 
     @staticmethod
     def fn(a, y):
+        """Return the cost associated with an output ``a`` and desired output
+        ``y``.
+
+        """
         return 0.5*np.linalg.norm(a-y)**2
 
     @staticmethod
     def delta(z, a, y):
+        """Return the error delta from the output layer."""
         return (a-y) * sigmoid_prime(z)
 
 
@@ -34,32 +43,85 @@ class CrossEntropyCost(object):
 
     @staticmethod
     def fn(a, y):
+        """Return the cost associated with an output ``a`` and desired output
+        ``y``.  Note that np.nan_to_num is used to ensure numerical
+        stability.  In particular, if both ``a`` and ``y`` have a 1.0
+        in the same slot, then the expression (1-y)*np.log(1-a)
+        returns nan.  The np.nan_to_num ensures that that is converted
+        to the correct value (0.0).
+
+        """
         return np.sum(np.nan_to_num(-y*np.log(a)-(1-y)*np.log(1-a)))
 
     @staticmethod
     def delta(z, a, y):
+        """Return the error delta from the output layer.  Note that the
+        parameter ``z`` is not used by the method.  It is included in
+        the method's parameters in order to make the interface
+        consistent with the delta method for other cost classes.
 
+        """
         return (a-y)
 
+
+#### Main Network class
 class Network(object):
 
     def __init__(self, sizes, cost=CrossEntropyCost):
+        """The list ``sizes`` contains the number of neurons in the respective
+        layers of the network.  For example, if the list was [2, 3, 1]
+        then it would be a three-layer network, with the first layer
+        containing 2 neurons, the second layer 3 neurons, and the
+        third layer 1 neuron.  The biases and weights for the network
+        are initialized randomly, using
+        ``self.default_weight_initializer`` (see docstring for that
+        method).
+
+        """
         self.num_layers = len(sizes)
         self.sizes = sizes
         self.default_weight_initializer()
         self.cost=cost
 
     def default_weight_initializer(self):
+        """Initialize each weight using a Gaussian distribution with mean 0
+        and standard deviation 1 over the square root of the number of
+        weights connecting to the same neuron.  Initialize the biases
+        using a Gaussian distribution with mean 0 and standard
+        deviation 1.
+
+        Note that the first layer is assumed to be an input layer, and
+        by convention we won't set any biases for those neurons, since
+        biases are only ever used in computing the outputs from later
+        layers.
+
+        """
         self.biases = [np.random.randn(y, 1) for y in self.sizes[1:]]
         self.weights = [np.random.randn(y, x)/np.sqrt(x)
                         for x, y in zip(self.sizes[:-1], self.sizes[1:])]
 
     def large_weight_initializer(self):
+        """Initialize the weights using a Gaussian distribution with mean 0
+        and standard deviation 1.  Initialize the biases using a
+        Gaussian distribution with mean 0 and standard deviation 1.
+
+        Note that the first layer is assumed to be an input layer, and
+        by convention we won't set any biases for those neurons, since
+        biases are only ever used in computing the outputs from later
+        layers.
+
+        This weight and bias initializer uses the same approach as in
+        Chapter 1, and is included for purposes of comparison.  It
+        will usually be better to use the default weight initializer
+        instead.
+
+        """
         self.biases = [np.random.randn(y, 1) for y in self.sizes[1:]]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(self.sizes[:-1], self.sizes[1:])]
 
-    def feed_forward(self, a):
+    def feedforward(self, a):
+        """Return the output of the network if ``a`` is input."""
         for b, w in zip(self.biases, self.weights):
             a = sigmoid(np.dot(w, a)+b)
         return a
@@ -261,113 +323,10 @@ def vectorized_result(j):
     e[j] = 1.0
     return e
 
-class MarkovChain:
-	class ProbabilityMatrix(np.matrix):
-		
-		def __init__(self, array, events_x, events_y):
-			self.events_x, self.events_y = events_x, events_y
-			super(ProbabilityMatrix, self).__init__(array)
-			
-		def getitem(self, item):
-			return {(self.events_x, self.events_y) : item}
-			
-		def setitem(self, item, value):
-			try:
-				x,y = self.events_x.index(item[0]), self.events_y.index(item[1])
-			except ValueError:
-				return
-			
-			super(ProbabilityMatrix, self).__setitem__((x,y), value)
-				
+def sigmoid(z):
+    """The sigmoid function."""
+    return 1.0/(1.0+np.exp(-z))
 
-	
-	def __init__(self, probability_matrix, initial_state, events_x, events_y):
-		assert (probability_matrix.shape[0] == len(initial_state))
-		assert (np.sum(initial_state) == 1)
-		self.P = probability_matrix
-		self.Pn = {} #pn matrix
-		self.Pn[0] = self.P
-		self.S0 = initial_state
-		self.Sn = {}
-		self.Sn[0] = self.S0
-		self.events_x, self.events_y = events_x, events_y
-		
-	def __call__(self, n):
-		if n not in self.Pn.keys():
-			self.Pn[n] = self.P**n
-		self.Sn[n] = self.Pn[n]*S0
-		return self.Sn[n]
-		
-	@staticmethod #bistate markov chain
-	def TrainMarkovChainWithWords(words):
-		#populate
-		letters = []
-		for word in words:
-			for l in word:
-				letters.append(l)
-		letters = list(set(letters))
-		n = len(letters)
-		P = np.zeros((n,n))
-		S0 = np.zeros(n)
-		U = np.zeros((n,n))
-		for word in words:
-			S0[letters.index(word[0])] += 1.0
-			for i in range(len(word) - 1):
-				x, y = letters.index(word[i]), letters.index(word[i+1])
-				P[x,y] += 1.0
-
-		#TODO Normalize P
-
-		S0 = S0 / np.sum(S0)
-		
-		return MarkovChain(P,S0, letters, letters)	
-		
-	def __getitem__(self, item):
-		x,y = self.events_x.index(item[0]), self.events_y.index(item[1])
-		return self.P[x,y]
-	
-	def __str__(self):
-		return str(self.P)	
-				
-#sigmoids
-sigmoid = lambda x: 1.0 / (1.0 + np.exp(-x))
-sigmoid_prime = lambda x: sigmoid(x)*(1 - sigmoid(x))
-
-class Metric:
-	pass
-	
-class PNorm(Metric): #callable pNorm
-	def __init__(self, p):
-		self.p = p
-	
-	def __call__(self, X, squared=True):
-		d = np.sum(np.abs(X)**self.p)
-		if squared == True:
-			return d
-		else:
-			return d**(1.0/self.p)
-
-class Norms:
-	TaxicabNorm = PNorm(1)
-	EuclideanNorm = PNorm(2)
-	ChebysevMetric = staticmethod(lambda X: np.max(np.abs(X)))
-
-class KNNClassifier:
-	
-	@staticmethod
-	def getKNN(X, dataset, k, norm=Norms.EuclideanNorm):
-		dists = []
-		for Y in dataset:
-			dists.append(norm(X-Y))
-		dists = sorted(dists)
-		return dists[:k]
-		
-
-if __name__ == '__main__':
-	words = ['hello', 'hoe', 'hell', 'ole']
-	M = MarkovChain.TrainMarkovChainWithWords(words)
-	print M.events_x
-	print M
-	print Norms.TaxicabNorm(np.array([4,3]))
-	
-	
+def sigmoid_prime(z):
+    """Derivative of the sigmoid function."""
+    return sigmoid(z)*(1-sigmoid(z))

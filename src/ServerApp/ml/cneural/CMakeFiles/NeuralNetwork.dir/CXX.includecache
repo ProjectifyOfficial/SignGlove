@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/NeuralNetwork.cpp
+NeuralNetwork.h
+/home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/NeuralNetwork.h
+iostream
+-
+
+/home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/NeuralNetwork.h
+vector
+-
+cassert
+-
+string
+-
+sstream
+-
+fstream
+-
+cstdlib
+-
+cmath
+-
+
