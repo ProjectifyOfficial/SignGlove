@@ -1,11 +1,8 @@
 #include "NeuralNetwork.h"
 #include <iostream>
+#define DBL_MAX 1.79769e+308
 
 using namespace std;
-
-#define DBL_MAX 1.79e+308
-
-extern "C" {
 
 Neuron::Neuron()
 {
@@ -23,7 +20,7 @@ Neuron::Neuron(int prevNum, int index)
 
 Neuron::Neuron(int prevNum, int index, double output)
 {
-	output = e = 0;
+	e = 0;
 	weights.resize(prevNum);
 	for (int i = 0; i < prevNum; i++)
 		weights[i] = (double)rand() / RAND_MAX;
@@ -186,41 +183,53 @@ vector<double> Network::Feed(vector<double> input)
 
 void Network::SaveWeights(string dir)
 {
-	/*ofstream fout(dir.c_str());
+	ofstream fout(dir.c_str());
 
 	for (int i = 0; i < layers.size(); i++)
 		for (int j = 0; j < layers[i].size(); j++)
 			for (int w = 0; w < layers[i][j].weights.size(); w++)
-				fout << layers[i][j].weights[w] << " ";*/
+				fout << layers[i][j].weights[w] << " ";
 }
 
 void Network::LoadWeights(string dir)
 {
-	/*ifstream fin(dir);
+	ifstream fin(dir.c_str());
 
 	for (int i = 0; i < layers.size(); i++)
 		for (int j = 0; j < layers[i].size(); j++)
 			for (int w = 0; w < layers[i][j].weights.size(); w++)
-				fin >> layers[i][j].weights[w];*/
+				fin >> layers[i][j].weights[w];
 }
 
 void Print(vector<double> vec)
 {
-	for (unsigned int i = 0; i < vec.size(); i++)
+	for (int i = 0; i < vec.size(); i++)
 		cout << vec[i] << " ";
 
 	cout << endl;
 }
 
-
-
-
-}
-
-extern "C" void* Initialize()
+extern "C" void* Initialize(int n, int *data)
 {
-	Network* net = new Network("2 5 1");
+	
+	string fmt;
+	stringstream stream;
 
+	for (int i = 0; i < n; i++)
+	{
+  string temp;
+  stream << data[i];
+  stream >> temp;
+
+  fmt += temp;
+
+	if (i < n - 1)
+	fmt += " ";
+	stream.clear();
+	}
+
+	Network* net = new Network(fmt);
+	
 	vector<vector<double> > inputs;
 	vector<double> temp;
 	temp.push_back(0);
@@ -241,16 +250,14 @@ extern "C" void* Initialize()
 
 	cout << "vector ready" << endl;
 
-	//net.LoadWeights("TestXOR.txt");
-
 	net->Initiate(inputs, outputs);
 
 	cout << "Network initialized" << endl;
 
-	for (int i = 0; net->error > 1; i++)
+	for (int i = 0; net->error > 0.1; i++)
 	{
 		if (i % 1000 == 0)
-			cout << net->error << endl;
+			cout << "foo "<< net->error << endl;
 
 		net->Train();
 	}
@@ -258,16 +265,54 @@ extern "C" void* Initialize()
 	return net;
 }
 
-extern "C" void Feed(void* network, int N, double* params)
+extern "C" double* Feed(void* network, double* params, double* outputs)
 {
 	Network& net = *(Network*)network;
 
 	vector<double> temp;
 
-	for (int i = 0; i < N; i++)
+	int n = net.layers[0].size() - 1;	// exclude bias neuron
+
+	for (int i = 0; i < n; i++)
 		temp.push_back(params[i]);
 
-	Print(net.Feed(temp));
-
 	cout << "End print" << endl;
+
+	vector<double> d = net.Feed(temp);
+
+	for (int i = 0; i < d.size(); i++)
+		outputs[i] = d[i];
+
+	return outputs;
+}
+
+extern "C" int SaveWeights(void *network, const char *dir)
+{
+ Network& net = *(Network*)network;
+ ofstream fout(dir);
+
+ if (fout.is_open() == false)
+  return 0;
+
+ for (int i = 0; i < net.layers.size(); i++)
+  for (int j = 0; j < net.layers[i].size(); j++)
+   for (int w = 0; w < net.layers[i][j].weights.size(); w++)
+    fout << net.layers[i][j].weights[w] << " ";
+
+ return 1;
+}
+
+extern "C" int LoadWeights(void *network, const char *dir)
+{
+ Network& net = *(Network*)network;
+ ifstream fin(dir);
+
+ if (fin.is_open() == false)
+  return 0;
+
+ for (int i = 0; i < net.layers.size(); i++)
+  for (int j = 0; j < net.layers[i].size(); j++)
+   for (int w = 0; w < net.layers[i][j].weights.size(); w++)
+    fin >> net.layers[i][j].weights[w];    
+return 1;
 }

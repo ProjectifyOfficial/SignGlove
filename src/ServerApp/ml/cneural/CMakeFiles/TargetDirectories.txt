@@ -1,1 +1,1 @@
-/home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/CMakeFiles/NeuralNetwork.dir
+/home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles/NeuralNetwork.dir

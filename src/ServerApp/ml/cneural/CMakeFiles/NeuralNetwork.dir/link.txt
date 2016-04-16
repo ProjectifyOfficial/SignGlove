@@ -1,1 +1,1 @@
-/usr/bin/c++  -fPIC -fPIC -Wall -std=c++11 -Wno-sign-compare   -shared -Wl,-soname,libNeuralNetwork.so -o libNeuralNetwork.so CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o 
+/usr/bin/c++  -fPIC -fPIC -Wall -std=c++11 -Wno-sign-compare -fpermissive   -shared -Wl,-soname,libNeuralNetwork.so -o libNeuralNetwork.so CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o 

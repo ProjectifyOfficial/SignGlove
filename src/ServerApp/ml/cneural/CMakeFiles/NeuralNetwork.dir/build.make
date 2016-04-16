@@ -35,10 +35,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib
+CMAKE_SOURCE_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib
+CMAKE_BINARY_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural
 
 # Include any dependencies generated for this target.
 include CMakeFiles/NeuralNetwork.dir/depend.make
@@ -51,17 +51,17 @@ include CMakeFiles/NeuralNetwork.dir/flags.make
 
 CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o: CMakeFiles/NeuralNetwork.dir/flags.make
 CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o: NeuralNetwork.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o -c /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/NeuralNetwork.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o -c /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/NeuralNetwork.cpp
 
 CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/NeuralNetwork.cpp > CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/NeuralNetwork.cpp > CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.i
 
 CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/NeuralNetwork.cpp -o CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/NeuralNetwork.cpp -o CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.s
 
 CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o.requires:
 .PHONY : CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o.requires
@@ -97,6 +97,6 @@ CMakeFiles/NeuralNetwork.dir/clean:
 .PHONY : CMakeFiles/NeuralNetwork.dir/clean
 
 CMakeFiles/NeuralNetwork.dir/depend:
-	cd /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/CMakeFiles/NeuralNetwork.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles/NeuralNetwork.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/NeuralNetwork.dir/depend
 

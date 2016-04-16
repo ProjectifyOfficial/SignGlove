@@ -39,10 +39,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib
+CMAKE_SOURCE_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib
+CMAKE_BINARY_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -69,9 +69,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/CMakeFiles /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

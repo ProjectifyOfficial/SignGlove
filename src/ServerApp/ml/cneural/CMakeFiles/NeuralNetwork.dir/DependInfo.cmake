@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/NeuralNetwork.cpp" "/home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o"
+  "/home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/NeuralNetwork.cpp" "/home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 

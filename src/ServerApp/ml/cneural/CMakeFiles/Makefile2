@@ -47,10 +47,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib
+CMAKE_SOURCE_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib
+CMAKE_BINARY_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural
 
 #=============================================================================
 # Target rules for target CMakeFiles/NeuralNetwork.dir
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib
 CMakeFiles/NeuralNetwork.dir/all:
 	$(MAKE) -f CMakeFiles/NeuralNetwork.dir/build.make CMakeFiles/NeuralNetwork.dir/depend
 	$(MAKE) -f CMakeFiles/NeuralNetwork.dir/build.make CMakeFiles/NeuralNetwork.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/CMakeFiles  1
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles  1
 	@echo "Built target NeuralNetwork"
 .PHONY : CMakeFiles/NeuralNetwork.dir/all
 
@@ -69,9 +69,9 @@ all: CMakeFiles/NeuralNetwork.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/NeuralNetwork.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles 1
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/NeuralNetwork.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/clib/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles 0
 .PHONY : CMakeFiles/NeuralNetwork.dir/rule
 
 # Convenience name for target.
