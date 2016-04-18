@@ -2,11 +2,12 @@ import time
 #global constants
 global SENSOR_COUNT, SYMBOL_COUNT, UPDATE_TIME, VALID_GESTURE_TIME, BAUDRATE, THRESHOLD
 SENSOR_COUNT = 6
-SYMBOL_COUNT = 4
+#SYMBOL_COUNT = 4
 UPDATE_TIME = 10
 VALID_GESTURE_TIME = 0.01
 BAUDRATE = 9600
 THRESHOLD = 98.0
+from __init__ import Connect, Parse
 
 class Range:
         
@@ -94,7 +95,7 @@ class SymbolManager:
     def Update(self, values):         # values = SENSOR_COUNT-element array of sensor feedback
         
         #SYMBOL_COUNT = len(self.Symbols)
-        for i in range(0, SYMBOL_COUNT):
+        for i in range(0, len(self.Symbols)):
             self.Symbols[i].Update(values)
 
         actives = self.GetActivated()
@@ -131,7 +132,7 @@ class SymbolManager:
     def GetActivated(self):
         actives = []
         
-        for i in range(0, SYMBOL_COUNT):
+        for i in range(0, len(self.Symbols)):
             if self.Symbols[i].ActivationPercentage >= THRESHOLD:
                 actives.append(self.Symbols[i])
                 
@@ -167,40 +168,34 @@ def populate_all(filename):
             
     return SymbolManager(symbols)
  
-def Connect(max_tries = 10):  #serial connect
-    ser = None
-    for i in range(max_tries):
-        try:
-            ser = serial.Serial('/dev/ttyACM{0}'.format(i), BAUDRATE)
-            try:
-                ser.open()
-            except:
-                pass
-            return ser
-        except:
-            print 'Cannot find serial at /dev/ttyACM{0}'.format(i)
-    if ser is None:
-        raise Exception('Serial connection failed')
-    return ser
-    
-def populate(_min, _max, name, care = True):
-    ranges = []
-    for i in range(len(_min)):
-        ranges.append(Range(_min[i], _max[i], care))
-    return Symbol(ranges, name)
-           
-def Parse(ser):
-    try:
-        line = ser.readline()
-        line = line.split(',')
-        line = line[:len(line) - 1]
-        if len(line) == SENSOR_COUNT:
-            return map(lambda x: int(x), line)
-        else:
-            return SENSOR_COUNT*[0]
-    except:
-        print 'Data could not be parsed. Serial error'
-        return SENSOR_COUNT*[0]
+#def Connect(max_tries = 10):  #serial connect
+    #ser = None
+    #for i in range(max_tries):
+        #try:
+            #ser = serial.Serial('/dev/ttyACM{0}'.format(i), BAUDRATE)
+            #try:
+                #ser.open()
+            #except:
+                #pass
+            #return ser
+        #except:
+            #print 'Cannot find serial at /dev/ttyACM{0}'.format(i)
+    #if ser is None:
+        #raise Exception('Serial connection failed')
+    #return ser
+               
+#def Parse(ser):
+    #try:
+        #line = ser.readline()
+        #line = line.split(',')
+        #line = line[:len(line) - 1]
+        #if len(line) == SENSOR_COUNT:
+            #return map(lambda x: int(x), line)
+        #else:
+            #return SENSOR_COUNT*[0]
+    #except:
+        #print 'Data could not be parsed. Serial error'
+        #return SENSOR_COUNT*[0]
     
 def populate(_min, _max, name, care = True):
     ranges = []

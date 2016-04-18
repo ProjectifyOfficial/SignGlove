@@ -8,7 +8,7 @@ from __init__ import *
 BAUDRATE = 9600
 SENSOR_COUNT = 6
   # TODO: fill
-  # TODO: fill
+  # TODO: fill what? 
   
 global symbols
 symbols = {'a': '0 0 0 0 1', 'c': '0 0 0 1 0', 'h': '0 0 1 0 0', 'i': '0 1 0 0 0', 'n': '1 0 0 0 0'}
@@ -18,43 +18,10 @@ def UpdateSymbols(s):
 		symbols[k] = '0 ' + symbols[k]
 	symbols[s] = '1 ' +  len(symbols) * '0 '   	  
 
-def Connect():  #serial connect
-	ser = None
-	for i in range(10):
-		try:
-			ser = serial.Serial('/dev/ttyACM{0}'.format(i), BAUDRATE)
-			try:
-				ser.open()
-			except:
-				pass
-			return ser
-		except:
-			print 'Cannot find serial at /dev/ttyACM{0}'.format(i)
-	return ser
 
-
-def Parse(ser):
-	try:
-		line = ser.readline()
-		line = line.split(',')
-		line = line[:len(line) - 1]
-		if len(line) == SENSOR_COUNT:
-			return map(lambda x: int(x), line)
-		else:
-			return SENSOR_COUNT*[0]
-	except:
-		return SENSOR_COUNT*[0]
-		
-
-#-----------------------   GLOBAL VARS  ----------------------------
 start = False
-#running = True
-#Min = []
-#Max = []
 Letter = None
-#--------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------------------------------------------------------
 def Input(fout):                # get inputs.. blocking function
 	global start, running, Letter
 	while True:
@@ -72,14 +39,7 @@ def Input(fout):                # get inputs.. blocking function
 		if c == 'p':
 			running = False
 
-#-----------------------------------------------------------------------------------------------------------------------------------------
 
-#def ResetMinMax():
-#    global Min, Max
-#    Min = SENSOR_COUNT * [10000]
-#    Max = SENSOR_COUNT * [-10000]
-
-#-----------------------------------------------------------------------------------------------------------------------------------------
 def Process(ser,fout):          # process inputs from serial
 	#ResetMinMax()
 	
@@ -99,17 +59,6 @@ def Process(ser,fout):          # process inputs from serial
 						s = s + str(array[i]) + ' '			
 				fout.write('{0}{1}'.format(s, symbols[Letter]))
 				fout.flush()
-		
-					
-					
-					#if array[i] > 1024:
-	 #                   continue
-	 #               if array[i] < Min[i]:
-#                        Min[i] = array[i]
-	  #              elif array[i] > Max[i]:
-  #                      Max[i] = array[i]
-
-
 #-----------------------------------------------------------------------------------------------------------------------------------------
 
 #gui
@@ -150,7 +99,7 @@ class InterfaceMinMax(BoxLayout):
 		#self.ids.min_max_lbl.text = str(Min) + ' ' + str(Max) + ' ' + str(Letter)
 		#self.fout.write('{0}\n{1}\n{2}\n'.format(str(Min), str(Max), str(Letter)))
 		#self.fout.flush()
-		#self.ids.input_box.text = ''
+		self.ids.input_box.text = ''
 		
 	def quit(self):
 		self.ser.close()

@@ -4,7 +4,7 @@ import math,string,random,time
 THRESHOLD = 1000 #TODO change
 global VALID_GESTURE_TIME
 VALID_GESTURE_TIME = 0.01
-SYMBOL_COUNT = 6
+#SYMBOL_COUNT = 6
 
 #Metrics and norms
 class Metric:

@@ -19,6 +19,9 @@ import TiltState, SensorProcessor, GenerateMinMax
 #global variable is set to True if Android
 global ANDROID_DEVICE; ANDROID_DEVICE = True
 global EXEC_PERMISSIONS; EXEC_PERMISSIONS = True
+global SENSOR_COUNT, UPDATE_TIME, BAUDRATE
+SENSOR_COUNT = 6
+#global SYMBOL_COUNT; SYMBOL_COUNT = 4
 
 #serial communication
 def Connect(max_tries = 10, baudrate=9600):  #serial connect
@@ -32,6 +35,19 @@ def Connect(max_tries = 10, baudrate=9600):  #serial connect
     if ser is None:
         raise Exception('Serial connection failed')
     return ser
+
+#input data parse
+def Parse(ser):
+	try:
+		line = ser.readline()
+		line = line.split(',')
+		line = line[:len(line) - 1]
+		if len(line) == SENSOR_COUNT:
+			return map(lambda x: int(x), line)
+		else:
+			return SENSOR_COUNT*[0]
+	except:
+		return SENSOR_COUNT*[0]
 
 #permission scripts for ownership and       
 def get_permissions(serial_port_name, user_id):
@@ -66,9 +82,7 @@ if ANDROID_DEVICE == True:
     global droid
     droid = android.Android()   
 
-global SENSOR_COUNT, SYMBOL_COUNT, UPDATE_TIME, BAUDRATE
-SENSOR_COUNT = 6
-SYMBOL_COUNT = 4
+
 
 #phone details    
 class MyPhone:

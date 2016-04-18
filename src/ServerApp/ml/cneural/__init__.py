@@ -6,7 +6,7 @@ EPSILON = -1
 """
 
 class CTypesArray:
-	
+	"""Wrapper class for ctypes-flavoured arrays"""
 	def __init__(self, arr, datatype=ctypes.c_double):
 		self.n = len(arr)
 		self.arr = (datatype * self.n)()
@@ -28,7 +28,7 @@ class CTypesArray:
 	__len__ = lambda self: self.n	
 
 class Network:
-	
+	"""Wrapper class for our neural net"""
 	def __init__(self):
 		self.DLL = ctypes.cdll.LoadLibrary("./libNeuralNetwork.so")
 		#initialization methods
@@ -99,9 +99,11 @@ class Network:
 		return results
 					
 	@staticmethod
-	def Default():
+	def Default(min_error = 0.1):
 		network = Network()
 		network.Initialize([2,5,1])
+		network.Train(min_error)
+		network.SaveWeights('./weights.txt')
 		return network	
 		
 class SymbolState:
@@ -163,11 +165,10 @@ class SymbolManager:
 	@staticmethod
 	def DummySub(data):
 		print 'shake that ' + str(data)
-		
-	@staticmethod
-			
+				
 				
 if __name__ == '__main__':
+	#import os; os.chdir('/storage/emulated/0/com.hipipal.qpyplus/projects/ServerApp2')
 
 	symbol_manager = SymbolManager(['sin','cos'], weights_dir=None, filename='/home/marios/sin.txt')
 	symbol_manager.Subscribers.append(SymbolManager.DummySub)

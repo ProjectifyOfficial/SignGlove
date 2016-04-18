@@ -24,7 +24,7 @@ class Interface(BoxLayout):
                 try:
                     y = SensorProcessor.Parse(serialObject)
  
-                    print y, [self.symbol_manager.Symbols[i].ActivationPercentage for i in range(SYMBOL_COUNT)]
+                    print y, [self.symbol_manager.Symbols[i].ActivationPercentage for i in range(len(self.symbol_manager.Symbols))]
                     self.symbol_manager.Update(y)
                     if self.ids.use_log is True:
 					    self.log_file.write('sensor data ' + str(y) + '\n')
