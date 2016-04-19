@@ -36,6 +36,8 @@ class Network:
 		self.DLL.Initialize.argtype = (ctypes.c_int, ctypes.POINTER (ctypes.c_int) )
 		self.DLL.InitializeFromFile.argtype = (ctypes.c_char_p, ctypes.POINTER(ctypes.c_int))
 		self.DLL.InitializeFromFile.restype = ctypes.c_void_p
+		self.DLL.InitializeFromFileWithSymbols.argtype = (ctypes.c_char_p, ctypes.POINTER(ctypes.c_int))
+		self.DLL.InitializeFromFileWithSymbols.restype = ctypes.c_void_p
 		
 		#functions
 		self.DLL.Feed.argtypes = (ctypes.c_void_p, ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double))
@@ -61,6 +63,13 @@ class Network:
 		self.n_outputs = self.n_outputs[0]
 		return self.neural_instance
 		
+	def InitializeFromFileWithSymbols(self, filename):
+		filename = ctypes.c_char_p(filename)
+		self.n_outputs = CTypesArray([0], datatype=ctypes.c_int)
+		self.neural_instance = self.DLL.InitializeFromFileWithSymbols(filename, self.n_outputs.ptr)
+		self.n_outputs = self.n_outputs[0]
+		return self.neural_instance
+		
 	def Feed(self, params):
 		params = CTypesArray(params)
 		outputs = CTypesArray(self.n_outputs*[0])
@@ -80,8 +89,7 @@ class Network:
 		
 	def Vote(self, params):
 		outputs = self.Feed(params)
-		for x in outputs:
-			x = 2*(x - 0.5)
+		#print 'sin: {0}, cos: {1}'.format(outputs[0]*2 - 1, outputs[1]*2 - 1)
 		print outputs
 		j = 0
 		for i in range(len(outputs)):
@@ -124,7 +132,7 @@ class SymbolState:
 		
 class SymbolManager:
 	
-	def __init__(self, symbols, weights_dir=None, filename=None):
+	def __init__(self, symbols, weights_dir=None, filename=None, with_symbols = True):
 		self.State = SymbolState()
 		self.ActivationData = None
 		self.StartTime = time.time()
@@ -132,20 +140,23 @@ class SymbolManager:
 		self.Symbols = symbols
 		self.neural = Network()
 		if filename is not None:
-			self.neural.InitializeFromFile(filename)
+			if with_symbols == False:
+				self.neural.InitializeFromFile(filename)
+			else:
+				self.neural.InitializeFromFileWithSymbols(filename)
 		else:
 			self.neural.Initialize([2,3,4])
 		if weights_dir is not None:
 			self.neural.LoadWeights(weights_dir)
 		else:
-			self.neural.Train(min_error=0.01)
+			self.neural.Train(min_error=0.001)
 			self.neural.SaveWeights('./weights.txt')
 	
 	def Update(self, values):
 		dt = time.time() - self.StartTime
 				
 		candidate_class = self.neural.Vote(values)
-		
+		#TODO Sync
 		if candidate_class != None and len(candidate_class) == 1:
 			self.OnActivationChanged(self.Symbols[candidate_class[0]])
 
@@ -155,27 +166,47 @@ class SymbolManager:
 		for f in self.Subscribers:
 			f(data)
 	
-	#replaced by vote	 
+	#replaced by self.Vote	 
 	def GetActivated(self):
 		print 'obsolete'
 		
 	def __str__(self):
 		return self.knn.clusters.__str__()	
+	
+	def FeedFromFile(sel, filename):
+		with open(filename, 'r') as f:
+			while 1 == 1:
+				line = f.readline()
+				if not line:
+					break
+				line = line.strip('\n').split(' ')
+				line = map(lambda x: int(x), line)
+				self.Update(line)
 		
 	@staticmethod
 	def DummySub(data):
-		print 'shake that ' + str(data)
+		print 'shake that! Everyday I am shuffling:  ' + str(data)
+		
+	@staticmethod
+	def populate_all(filename, symbols_file, weights_dir = None):
+		with open(symbols_file, 'r') as f:
+			symbols = f.readline().strip('\n').split(' ')
+		print symbols[:len(symbols) - 1]
+		return SymbolManager(symbols[:len(symbols) - 1], weights_dir = weights_dir, filename = filename, with_symbols = True)
+		
 				
 				
 if __name__ == '__main__':
 	#import os; os.chdir('/storage/emulated/0/com.hipipal.qpyplus/projects/ServerApp2')
 
-	symbol_manager = SymbolManager(['sin','cos'], weights_dir=None, filename='/home/marios/sin.txt')
-	symbol_manager.Subscribers.append(SymbolManager.DummySub)
-	print 'end start'
+	#symbol_manager = SymbolManager(['sin','cos','tan'], weights_dir=None, filename='/home/marios/xor.txt', with_symbols=True)
+	#symbol_manager.Subscribers.append(SymbolManager.DummySub)
 	
-	x = 0.0
-	while x <= 6.28:
-		print x
-		symbol_manager.Update([x])
-		x += 0.01
+	symbol_manager = SymbolManager.populate_all('../../data.txt', '../../symbols.txt')
+
+	#x = 0.0
+	#while x <= 6.28:
+	#	print x
+	#	symbol_manager.Update([x])
+	#	x += 0.01
+

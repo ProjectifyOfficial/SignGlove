@@ -7,7 +7,7 @@ UPDATE_TIME = 10
 VALID_GESTURE_TIME = 0.01
 BAUDRATE = 9600
 THRESHOLD = 98.0
-from __init__ import Connect, Parse
+from __init__ import *
 
 class Range:
         

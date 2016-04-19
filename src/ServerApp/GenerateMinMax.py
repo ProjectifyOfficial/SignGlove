@@ -10,8 +10,8 @@ SENSOR_COUNT = 6
   # TODO: fill
   # TODO: fill what? 
   
-global symbols
-symbols = {'a': '0 0 0 0 1', 'c': '0 0 0 1 0', 'h': '0 0 1 0 0', 'i': '0 1 0 0 0', 'n': '1 0 0 0 0'}
+#global symbols
+#symbols = {'a': '0 0 0 0 1', 'c': '0 0 0 1 0', 'h': '0 0 1 0 0', 'i': '0 1 0 0 0', 'n': '1 0 0 0 0'}
 
 def UpdateSymbols(s):
 	for k in symbols.keys():
@@ -23,7 +23,8 @@ start = False
 Letter = None
 
 def Input(fout):                # get inputs.. blocking function
-	global start, running, Letter
+	global start, running, Letter, pos
+	pos = 0
 	while True:
 		if c == 's':
 			if start == False:
@@ -41,13 +42,8 @@ def Input(fout):                # get inputs.. blocking function
 
 
 def Process(ser,fout):          # process inputs from serial
-	#ResetMinMax()
-	
-	#thread.start_new_thread(Input, (fout,))    
-	#global ser; ser = Connect()
-
-	#global Min, Max
-	global running
+	global running, pos
+	pos = -1
 	while True:
 		if running == True:
 			array = Parse(ser)
@@ -55,10 +51,12 @@ def Process(ser,fout):          # process inputs from serial
 			s = ''
 			if array != SENSOR_COUNT*[0]:
 				for i in range(SENSOR_COUNT):
-					if array[i] > 1024 or array[i] < 500: #TODO find new limits
+					#if array[i] > 1024 or array[i] < 500: #TODO find new limits
+					if 1 == 1:
 						s = s + str(array[i]) + ' '			
-				fout.write('{0}{1}'.format(s, symbols[Letter]))
+				fout.write('{0}{1}'.format(s, pos * '0 ' + '1\n'))
 				fout.flush()
+				
 #-----------------------------------------------------------------------------------------------------------------------------------------
 
 #gui
@@ -68,16 +66,15 @@ class InterfaceMinMax(BoxLayout):
 		super(InterfaceMinMax, self).__init__()
 		global running
 		self.fout = open('data.txt', 'w')
+		self.symbols_fout = open('symbols.txt', 'w')
 		self.ser = Connect()
 		running = False
 		inp_thread = thread.start_new_thread(Process, (self.ser,self.fout))
 		self.as_popup = as_popup
 		self.popup_obj = False
-	
-	def boo(self):
-		print 'hello'
-		
+			
 	def start(self):
+		global pos
 		if self.ids.input_box == '':
 			return
 		
@@ -85,25 +82,27 @@ class InterfaceMinMax(BoxLayout):
 		
 		if running == True:
 			return
+		pos += 1	
 		Letter = self.ids.input_box.text
-		#ResetMinMax()
 		running = True
 		
 	def stop(self):
 	   
-		global running, Min, Max, Letter
+		global running, Letter, pos
 		
 		if running == False:
 			return
 		running = False
-		#self.ids.min_max_lbl.text = str(Min) + ' ' + str(Max) + ' ' + str(Letter)
-		#self.fout.write('{0}\n{1}\n{2}\n'.format(str(Min), str(Max), str(Letter)))
-		#self.fout.flush()
+		time.sleep(0.02)
+		
+		self.symbols_fout.write(Letter + ' ')
+		self.symbols_fout.flush()
 		self.ids.input_box.text = ''
 		
 	def quit(self):
 		self.ser.close()
 		self.fout.close()
+		self.symbols_fout.close()
 		global running; running = False
 		exit()
 		
@@ -112,7 +111,8 @@ class MinMaxApp(App):
 
 #main
 
-if __name__ == '__main__':    
+if __name__ == '__main__':   
+	 
 	MinMaxApp().run()
 		
 
