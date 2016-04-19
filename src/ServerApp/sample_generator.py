@@ -1,3 +1,5 @@
+from __init__ import *
+
 arch_to_str = lambda arch: sum([str(x) + ' ' for x in arch])
 rule_of_thumb = lambda Ni, No, Ns, alpha: int(Ns*1.0 / (alpha*(Ni + No)))
 
@@ -23,8 +25,6 @@ def generate_arch_file(archstrlist, outfilename):
 		outfilename.write(s + '\n')
 	outfilename.close()
 	
-
-
 def populate_data_files(n_inputs = 6, n_outputs = 5):
 		n_hidden = int(raw_input('Give hidden layers #:'))
 		n_min = int(raw_input('Give infimum: '))
@@ -53,3 +53,20 @@ def populate_data_files_rule_of_thumb(n_inputs = 6, n_outputs = 5):
 			#generate_file(s, 'data' + s + '.txt') 
 			arch_list.append(s)
 	generate_arch_file(arch_list, 'archs.txt')
+	
+class NeuralNetworkFactory:
+
+	@staticmethod
+	def GenerateNN(n, min_error = 0.01, datafile = './data.txt', archfile = '/archs.txt'):
+		nn = Network()
+		nn.InitializeFromFileWithSymbolsAndArch(datafile, archfile, n)
+		nn.Train(min_error)
+		with open(archfile) as f:
+			for i in range(n):
+				line = f.readline()
+		nn.SaveWeights('weights' + line + '.txt')
+		return nn
+		
+if __name__ == '__main__':
+	pass
+		

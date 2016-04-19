@@ -49,7 +49,6 @@ public:
 
 	void SaveWeights(string dir);
 	void LoadWeights(string dir);
-	string GetArchitectureAsString();
 
 	vector<double> Feed(vector<double> input);
 
