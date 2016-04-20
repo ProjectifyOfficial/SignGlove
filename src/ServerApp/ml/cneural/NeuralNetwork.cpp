@@ -205,6 +205,22 @@ void Network::LoadWeights(string dir)
 				fin >> layers[i][j].weights[w];
 }
 
+string Network::GetArchitectureAsString()
+{
+	string arch;
+	
+	for(int i = 1; i < layers.size() - 1; i++)
+	{
+		string temp;
+		stringstream stream;
+		stream << layers[i].size();
+		stream >> temp;
+		arch += temp;
+	}
+	
+	return arch;
+}
+
 void Print(vector<double> vec)
 {
 	for (int i = 0; i < vec.size(); i++)
@@ -372,6 +388,71 @@ extern "C" int LoadWeights(void *network, const char *dir)
 return 1;
 }
 
+extern "C" void* InitializeFromFileWithSymbolsAndArch(char* dir, int* numOutputs, char* archDir, int n)
+{
+	ifstream fin(dir);
+	ifstream farch(archDir);
+
+	if (fin.is_open() == false || farch.is_open() == false)
+	{
+		cout << "File not found!" << endl;
+		return 0;
+	}
+	
+	string arch;
+	for(int i = 0; i < n; i++)
+		getline(farch, arch);
+	
+	//std::getline(fin, arch);
+
+	Network* net = new Network(arch);
+
+	vector<vector<double> > inputs;
+	vector<vector<double> > expected;
+
+	*numOutputs = net->layers.back().size() - 1;
+
+	while (!fin.eof())
+	{
+		string temp;
+		std::getline(fin, temp);
+		
+		if (temp == "") continue;
+
+		stringstream ss(temp);
+		double val;
+		vector<double> vec;
+
+		for (int i = 0; i < net->layers.front().size() - 1; i++)		// exclude bias
+		{
+			ss >> val;
+			vec.push_back(val);
+		}
+		inputs.push_back(vec);
+		vec.clear();
+
+		for (int i = 0; i < net->layers.back().size() - 1; i++)
+		{
+			while (ss >> val)
+			{
+				vec.push_back(val);
+				i++;
+			}
+
+			if (i == net->layers.back().size() - 1)
+				break;
+
+			vec.push_back(0);
+		}
+
+		expected.push_back(vec);
+	}
+
+
+	net->Initiate(inputs, expected);
+	return net;
+}
+
 extern "C" void* InitializeFromFileWithSymbols(char* dir, int* numOutputs)
 {
 	ifstream fin(dir);
@@ -436,8 +517,10 @@ extern "C" void* InitializeFromFileWithSymbols(char* dir, int* numOutputs)
 extern "C" void Train(void* network, double minError)
 {
 	Network& net = *(Network*)network;
-
-	ofstream fout("error.txt");
+	
+	string arch = net.GetArchitectureAsString();
+		
+	ofstream fout("./errors/error" + arch + ".txt");
 	
 	for (int i = 1; net.error > minError; i++)
 	{
@@ -458,3 +541,26 @@ extern "C" void Train(void* network, double minError)
 	fout.close();
 }
 
+extern "C" void* InitializeFromFileWithSymbols(char* dir, int* numOutputs);
+extern "C" void Train(void* network, double minError);
+extern "C" void* InitializeFromFileWithSymbolsAndArch(char* dir, int* numOutputs, char* archDir, int n);
+void Print(vector<double> vec);
+extern "C" int SaveWeights(void *network, const char *dir);
+
+int main()
+{
+	int outputs;
+
+	{
+		Network& net = *(Network*)InitializeFromFileWithSymbolsAndArch("../../data.txt", &outputs, "archs.txt", 70);
+
+		cout << net.GetArchitectureAsString() << endl;
+
+		Train(&net, 0.001);
+
+		net.SaveWeights("./weights/weight" + net.GetArchitectureAsString() + ".txt");
+	}
+
+	system("pause");
+	return 0;
+}

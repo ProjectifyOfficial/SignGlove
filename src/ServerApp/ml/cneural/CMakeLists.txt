@@ -3,3 +3,4 @@ project( NeuralNetwork )
 SET (CMAKE_CXX_FLAGS "-fPIC -Wall -std=c++11 -Wno-sign-compare -fpermissive")
 
 add_library(NeuralNetwork SHARED NeuralNetwork.cpp)
+add_executable(NeuralNetworkEx NeuralNetwork.cpp)

@@ -11,7 +11,7 @@
 
 using namespace std;
 
-static const double L_RATE = 1;
+static const double L_RATE = 2;
 static const double pi = 3.14159265359;
 
 class Neuron;
@@ -49,6 +49,7 @@ public:
 
 	void SaveWeights(string dir);
 	void LoadWeights(string dir);
+	string GetArchitectureAsString();
 
 	vector<double> Feed(vector<double> input);
 

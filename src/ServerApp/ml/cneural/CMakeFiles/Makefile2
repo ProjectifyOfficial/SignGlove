@@ -88,6 +88,41 @@ clean: CMakeFiles/NeuralNetwork.dir/clean
 .PHONY : clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/NeuralNetworkEx.dir
+
+# All Build rule for target.
+CMakeFiles/NeuralNetworkEx.dir/all:
+	$(MAKE) -f CMakeFiles/NeuralNetworkEx.dir/build.make CMakeFiles/NeuralNetworkEx.dir/depend
+	$(MAKE) -f CMakeFiles/NeuralNetworkEx.dir/build.make CMakeFiles/NeuralNetworkEx.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles  2
+	@echo "Built target NeuralNetworkEx"
+.PHONY : CMakeFiles/NeuralNetworkEx.dir/all
+
+# Include target in all.
+all: CMakeFiles/NeuralNetworkEx.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/NeuralNetworkEx.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/NeuralNetworkEx.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marios/workspace/presfhmmy-hackathon/src/ServerApp/ml/cneural/CMakeFiles 0
+.PHONY : CMakeFiles/NeuralNetworkEx.dir/rule
+
+# Convenience name for target.
+NeuralNetworkEx: CMakeFiles/NeuralNetworkEx.dir/rule
+.PHONY : NeuralNetworkEx
+
+# clean rule for target.
+CMakeFiles/NeuralNetworkEx.dir/clean:
+	$(MAKE) -f CMakeFiles/NeuralNetworkEx.dir/build.make CMakeFiles/NeuralNetworkEx.dir/clean
+.PHONY : CMakeFiles/NeuralNetworkEx.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/NeuralNetworkEx.dir/clean
+.PHONY : clean
+
+#=============================================================================
 # Special targets to cleanup operation of make.
 
 # Special rule to run CMake to check the build system integrity.

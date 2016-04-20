@@ -1,9 +1,35 @@
-import time,ctypes
+import time,ctypes, serial
 EPSILON = -1
-
+SENSOR_COUNT = 6
 """
 	This file contains a wrapper for a simple neural net that uses the backpropagation algorithm
 """
+
+def Parse(ser):
+    try:
+        line = ser.readline()
+        line = line.split(',')
+        line = line[:len(line) - 1]
+        if len(line) == SENSOR_COUNT:
+            return map(lambda x: int(x), line)
+        else:
+            return SENSOR_COUNT*[0]
+    except:
+        return SENSOR_COUNT*[0]
+
+def Connect(max_tries = 10, baudrate=9600):  #serial connect
+    ser = None
+    for i in range(max_tries):
+        try:
+            ser = serial.Serial('/dev/ttyACM{0}'.format(i), baudrate)
+            return ser
+        except:
+            print 'Cannot find serial at /dev/ttyACM{0}'.format(i)
+    if ser is None:
+        raise Exception('Serial connection failed')
+    return ser
+
+
 
 class CTypesArray:
 	"""Wrapper class for ctypes-flavoured arrays"""
@@ -38,6 +64,8 @@ class Network:
 		self.DLL.InitializeFromFile.restype = ctypes.c_void_p
 		self.DLL.InitializeFromFileWithSymbols.argtype = (ctypes.c_char_p, ctypes.POINTER(ctypes.c_int))
 		self.DLL.InitializeFromFileWithSymbols.restype = ctypes.c_void_p
+		self.DLL.InitializeFromFileWithSymbolsAndArch.argtype = (ctypes.c_char_p, ctypes.POINTER(ctypes.c_int), ctypes.c_char_p, ctypes.c_int)
+		self.DLL.InitializeFromFileWithSymbolsAndArch.restype = ctypes.c_void_p
 		
 		#functions
 		self.DLL.Feed.argtypes = (ctypes.c_void_p, ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double))
@@ -67,6 +95,15 @@ class Network:
 		filename = ctypes.c_char_p(filename)
 		self.n_outputs = CTypesArray([0], datatype=ctypes.c_int)
 		self.neural_instance = self.DLL.InitializeFromFileWithSymbols(filename, self.n_outputs.ptr)
+		self.n_outputs = self.n_outputs[0]
+		return self.neural_instance
+		
+	def InitializeFromFileWithSymbolsAndArch(self, filename, arch_file, n):
+		filename = ctypes.c_char_p(filename)
+		arch_file = ctypes.c_char_p(arch_file)
+		n = ctypes.c_int(n)
+		self.n_outputs = CTypesArray([0], datatype=ctypes.c_int)
+		self.neural_instance = self.DLL.InitializeFromFileWithSymbolsAndArch(filename, self.n_outputs.ptr, arch_file, n)
 		self.n_outputs = self.n_outputs[0]
 		return self.neural_instance
 		
@@ -145,7 +182,7 @@ class SymbolManager:
 			else:
 				self.neural.InitializeFromFileWithSymbols(filename)
 		else:
-			self.neural.Initialize([2,3,4])
+			self.neural.Initialize([5,10,20,5])
 		if weights_dir is not None:
 			self.neural.LoadWeights(weights_dir)
 		else:
@@ -193,20 +230,19 @@ class SymbolManager:
 			symbols = f.readline().strip('\n').split(' ')
 		print symbols[:len(symbols) - 1]
 		return SymbolManager(symbols[:len(symbols) - 1], weights_dir = weights_dir, filename = filename, with_symbols = True)
-		
-				
-				
+						
 if __name__ == '__main__':
 	#import os; os.chdir('/storage/emulated/0/com.hipipal.qpyplus/projects/ServerApp2')
+	ser = Connect()
 
 	#symbol_manager = SymbolManager(['sin','cos','tan'], weights_dir=None, filename='/home/marios/xor.txt', with_symbols=True)
-	#symbol_manager.Subscribers.append(SymbolManager.DummySub)
 	
-	symbol_manager = SymbolManager.populate_all('../../data.txt', '../../symbols.txt')
+	symbol_manager = SymbolManager.populate_all(None, '../../symbols.txt', weights_dir='./weights.txt' )
+	symbol_manager.Subscribers.append(SymbolManager.DummySub)
 
-	#x = 0.0
-	#while x <= 6.28:
-	#	print x
-	#	symbol_manager.Update([x])
-	#	x += 0.01
 
+
+	while True:
+		y = Parse(ser); print y
+		symbol_manager.Update(y)
+		time.sleep(0.5)	

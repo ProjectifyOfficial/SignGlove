@@ -111,12 +111,26 @@ NeuralNetwork/fast:
 	$(MAKE) -f CMakeFiles/NeuralNetwork.dir/build.make CMakeFiles/NeuralNetwork.dir/build
 .PHONY : NeuralNetwork/fast
 
+#=============================================================================
+# Target rules for targets named NeuralNetworkEx
+
+# Build rule for target.
+NeuralNetworkEx: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 NeuralNetworkEx
+.PHONY : NeuralNetworkEx
+
+# fast build rule for target.
+NeuralNetworkEx/fast:
+	$(MAKE) -f CMakeFiles/NeuralNetworkEx.dir/build.make CMakeFiles/NeuralNetworkEx.dir/build
+.PHONY : NeuralNetworkEx/fast
+
 NeuralNetwork.o: NeuralNetwork.cpp.o
 .PHONY : NeuralNetwork.o
 
 # target to build an object file
 NeuralNetwork.cpp.o:
 	$(MAKE) -f CMakeFiles/NeuralNetwork.dir/build.make CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.o
+	$(MAKE) -f CMakeFiles/NeuralNetworkEx.dir/build.make CMakeFiles/NeuralNetworkEx.dir/NeuralNetwork.cpp.o
 .PHONY : NeuralNetwork.cpp.o
 
 NeuralNetwork.i: NeuralNetwork.cpp.i
@@ -125,6 +139,7 @@ NeuralNetwork.i: NeuralNetwork.cpp.i
 # target to preprocess a source file
 NeuralNetwork.cpp.i:
 	$(MAKE) -f CMakeFiles/NeuralNetwork.dir/build.make CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.i
+	$(MAKE) -f CMakeFiles/NeuralNetworkEx.dir/build.make CMakeFiles/NeuralNetworkEx.dir/NeuralNetwork.cpp.i
 .PHONY : NeuralNetwork.cpp.i
 
 NeuralNetwork.s: NeuralNetwork.cpp.s
@@ -133,6 +148,7 @@ NeuralNetwork.s: NeuralNetwork.cpp.s
 # target to generate assembly for a file
 NeuralNetwork.cpp.s:
 	$(MAKE) -f CMakeFiles/NeuralNetwork.dir/build.make CMakeFiles/NeuralNetwork.dir/NeuralNetwork.cpp.s
+	$(MAKE) -f CMakeFiles/NeuralNetworkEx.dir/build.make CMakeFiles/NeuralNetworkEx.dir/NeuralNetwork.cpp.s
 .PHONY : NeuralNetwork.cpp.s
 
 # Help Target
@@ -142,6 +158,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... NeuralNetwork"
+	@echo "... NeuralNetworkEx"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... NeuralNetwork.o"
