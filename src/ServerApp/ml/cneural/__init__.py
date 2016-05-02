@@ -6,30 +6,28 @@ SENSOR_COUNT = 6
 """
 
 def Parse(ser):
-    try:
-        line = ser.readline()
-        line = line.split(',')
-        line = line[:len(line) - 1]
-        if len(line) == SENSOR_COUNT:
-            return map(lambda x: int(x), line)
-        else:
-            return SENSOR_COUNT*[0]
-    except:
-        return SENSOR_COUNT*[0]
+	try:
+		line = ser.readline()
+		line = line.split(',')
+		line = line[:len(line) - 1]
+		if len(line) == SENSOR_COUNT:
+			return map(lambda x: int(x), line)
+		else:
+			return SENSOR_COUNT*[0]
+	except:
+		return SENSOR_COUNT*[0]
 
 def Connect(max_tries = 10, baudrate=9600):  #serial connect
-    ser = None
-    for i in range(max_tries):
-        try:
-            ser = serial.Serial('/dev/ttyACM{0}'.format(i), baudrate)
-            return ser
-        except:
-            print 'Cannot find serial at /dev/ttyACM{0}'.format(i)
-    if ser is None:
-        raise Exception('Serial connection failed')
-    return ser
-
-
+	ser = None
+	for i in range(max_tries):
+		try:
+			ser = serial.Serial('/dev/ttyACM{0}'.format(i), baudrate)
+			return ser
+		except:
+			print 'Cannot find serial at /dev/ttyACM{0}'.format(i)
+	if ser is None:
+		raise Exception('Serial connection failed')
+	return ser
 
 class CTypesArray:
 	"""Wrapper class for ctypes-flavoured arrays"""

@@ -6,12 +6,7 @@
 from __init__ import *
 
 BAUDRATE = 9600
-SENSOR_COUNT = 6
-  # TODO: fill
-  # TODO: fill what? 
-  
-#global symbols
-#symbols = {'a': '0 0 0 0 1', 'c': '0 0 0 1 0', 'h': '0 0 1 0 0', 'i': '0 1 0 0 0', 'n': '1 0 0 0 0'}
+SENSOR_COUNT = 5
 
 def UpdateSymbols(s):
 	for k in symbols.keys():
@@ -47,7 +42,7 @@ def Process(ser,fout):          # process inputs from serial
 	while True:
 		if running == True:
 			array = Parse(ser)
-			#print array
+			print array
 			s = ''
 			if array != SENSOR_COUNT*[0]:
 				for i in range(SENSOR_COUNT):
